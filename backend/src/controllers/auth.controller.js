@@ -118,6 +118,23 @@ export const login= async (req,res) => {
     }
 }
 
-export const logout= async (req,res) => {}
+export const logout= async (req,res) => {
+    try {
+        res.clearCookie('jwt',{
+            hettpOnly:true,
+            sameSite:'strict',
+            secure:process.env.NODE_ENV !== 'development'
+        })
 
-export const checkme= async (req,res) => {}
+        res.status(200).json({
+            success:true,
+            message:'User logged out Successfully'
+        })
+    } catch (error) {
+        
+    }
+}
+
+export const checkMe= async (req,res) => {
+
+}
