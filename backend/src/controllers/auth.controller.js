@@ -141,7 +141,8 @@ export const checkMe= async (req,res) => {
     try {
         res.status(200).json({
             success:true,
-            message:"User authenticated"
+            message:"User authenticated",
+            user:req.user
         })
     } catch (error) {
         console.error("Error checking user:", error);
