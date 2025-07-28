@@ -58,7 +58,7 @@ export const checkAdmin = async (req, res, next) => {
       where: { id: userId },
       select: { role: true }
     });
-    if (user?.role !== 'ADMIN') {
+    if (!user || user.role !== 'ADMIN') {
       return res.status(403).json({
         message: "Forbidden - Admins only"
       });
