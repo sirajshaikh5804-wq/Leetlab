@@ -58,6 +58,7 @@ export const createProblem = async (req, res) => {
             error: `Testcase ${i + 1} failed for language ${language}. Error: ${
               result.status.description
             }`,
+            details: result
           });
         }
       }
@@ -78,14 +79,22 @@ export const createProblem = async (req, res) => {
           referenceSolutions,
         },
       });
+
+      console.log('Problem created successfully:', newProblem);
+
       return res.status(201).json({
         message: "Problem created successfully",
         problem: newProblem,
       });
     }
-  } catch (error) {}
+  } catch (error) {
+    console.error('Error creating problem:', error);
+    return res.status(500).json({
+      error: "Internal server error",
+      details: error.message
+  });
 };
-
+}
 export const getAllProblems = async (req, res) => {};
 
 export const getProblemById = async (req, res) => {};

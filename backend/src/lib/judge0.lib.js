@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 export const getJudge0LanguageId = (language)=>{
     const languageMap = {
         "PYTHON": 71,
@@ -10,13 +12,15 @@ export const getJudge0LanguageId = (language)=>{
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 export const pollBatchResults = async (tokens) => {
     while(true){
-        const {data} = axios.get(`${process.env.JUDGE0_API_URL}/submissions/batch`,{
+        const {data} = await axios.get(`${process.env.JUDGE0_API_URL}/submissions/batch`,{
             params:{
                 tokens: tokens.join(","),
                 base64_encoded: false,
             }
         })
         const results = data.submissions
+
+    console.log('Polling Results:', results) 
 
         const isAllDone= results.every(
             (res)=>res.status.id !==1 && res.status.id !==2 // 1-> In Queue, 2-> Processing
@@ -28,10 +32,10 @@ export const pollBatchResults = async (tokens) => {
 }
 
 export const submitBatch= async (submissions)=>{
-    const {data} =axios.post(`${process.env.JUDGE0_API_URL}/submissions/batch?base64_encoded=false`,{
+    const {data} =await axios.post(`${process.env.JUDGE0_API_URL}/submissions/batch?base64_encoded=false`,{
         submissions
     })
-    console.log('submission Result', data)
+    console.log('Submission response', data)
     
     return data //[{token},{token},{token}]
 }
