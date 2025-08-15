@@ -1,3 +1,4 @@
+import { isCancel } from "axios";
 import { db } from "../lib/db.js";
 import {
   getJudge0LanguageId,
@@ -170,4 +171,31 @@ export const delteleProblem = async (req, res) => {
   }
 };
 
-export const getAllProblemsSolvedByUser = async (req, res) => {};
+export const getAllProblemsSolvedByUser = async (req, res) => {
+  try {
+    const problems = await db.problem.findMany({
+      where: {
+        solvedBy: {
+          some: {
+            userId: req.user.id,
+          },
+        },
+      },
+      include: {
+        solvedBy: {
+          where: {
+            userId: req.usq.id,
+          },
+        },
+      },
+    });
+    res.status(200).json({
+      success: true,
+      message: "Problem fetched successfully",
+      problems,
+    });
+  } catch (error) {
+    console.log(`error fetching problems`, error);
+    res.status(500).json({ error: "Failed to fetch problem" });
+  }
+};
