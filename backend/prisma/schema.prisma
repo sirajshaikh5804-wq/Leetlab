@@ -76,7 +76,9 @@ model Submission {
   stderr        String?
   compileOutput String?
   status        String // Accepted, wrong Answer
-  time          String?
+  time         String?
+  memory      String?
+
   createdAt     DateTime @default(now())
   updatedAt     DateTime @default(now())
 

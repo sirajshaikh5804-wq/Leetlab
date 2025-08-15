@@ -15,7 +15,7 @@ export const executeCode = async (req, res) => {
     if (!userId) {
       return res.status(401).json({ error: "Unauthorized" });
     }
-    
+
     // problemId Check
     if (!problemId) {
       return res.status(400).json({ error: "Problem ID is required" });
@@ -59,11 +59,11 @@ export const executeCode = async (req, res) => {
       const passed = stdout === expected_output;
       if (!passed) allPassed = false;
 
-      console.log(`Testcase #${i + 1}`);
-      console.log(`Input: ${stdin[i]}`);
-      console.log(`Expected Output: ${expected_output}`);
-      console.log(`Actual Output: ${stdout}`);
-      console.log(`Matched: ${passed}`);
+      // console.log(`Testcase #${i + 1}`);
+      // console.log(`Input: ${stdin[i]}`);
+      // console.log(`Expected Output: ${expected_output}`);
+      // console.log(`Actual Output: ${stdout}`);
+      // console.log(`Matched: ${passed}`);
 
       return {
         testCase: i + 1,
@@ -73,11 +73,11 @@ export const executeCode = async (req, res) => {
         stderr: result.stderr || null,
         compile_output: result.compile_output || null,
         status: result.status?.description || null,
-        memory: result.memory ?? null, // store as number
-        time: result.time ?? null, // store as number
+        memory: result.memory ? `${result.memory}KB` :undefined,
+        time: result.time ? `${result.time}s` : undefined, 
       };
     });
-
+    console.log(`detailedResults---------`);
     console.log(detailedResults);
 
     // 6. Store submission summary
@@ -88,7 +88,6 @@ export const executeCode = async (req, res) => {
         sourceCode: source_code,
         language: getLanguageName(language_id),
         stdin: stdin.join("\n"),
-        // stdin: JSON.stringify(stdin),
         stdout: JSON.stringify(detailedResults.map((r) => r.stdout)),
         stderr: detailedResults.some((r) => r.stderr)
           ? JSON.stringify(detailedResults.map((r) => r.stderr))
