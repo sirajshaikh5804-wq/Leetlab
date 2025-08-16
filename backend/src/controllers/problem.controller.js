@@ -184,7 +184,7 @@ export const getAllProblemsSolvedByUser = async (req, res) => {
       include: {
         solvedBy: {
           where: {
-            userId: req.usq.id,
+            userId: req.user.id,
           },
         },
       },
@@ -196,6 +196,6 @@ export const getAllProblemsSolvedByUser = async (req, res) => {
     });
   } catch (error) {
     console.log(`error fetching problems`, error);
-    res.status(500).json({ error: "Failed to fetch problem" });
+    res.status(500).json({ error: "Failed to fetch problem", });
   }
 };
