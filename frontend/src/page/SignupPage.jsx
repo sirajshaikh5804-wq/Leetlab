@@ -1,12 +1,10 @@
 
 import AuthImagePattern from '../components/AuthImagePattern'
 import SignupForm from '../components/SignupForm';
-import Signup from '../components/SignupForm';
 
 
 
 const SignupPage = () => {
-
   return (
     <div className='h-screen grid lg:grid-cols-2'>
       <SignupForm/>
