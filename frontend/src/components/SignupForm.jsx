@@ -149,7 +149,7 @@ const SignupForm = () => {
                   Loading...
                 </>
               ) : (
-                "Sign in"
+                "Sign up"
               )}
           </button>
         </form>

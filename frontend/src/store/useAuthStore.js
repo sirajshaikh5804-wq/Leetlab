@@ -1,20 +1,19 @@
 import { create } from "zustand";
-import { axiosInsntance } from "../lib/axios.js";
+import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
 
 export const useAuthStore = create((set) => ({
   authUser: null,
   isSigninUp: false,
-  isLoggedIn: false,
+  isLoggingIn: false,
   isCheckingAuth: false,
 
   checkAuth: async () => {
     set({ isCheckingAuth: true });
     try {
-      const res = await axiosInsntance.get("/auth/check");
-      if (!res.ok) throw new Error("Failed to authenticate user");
+      const res = await axiosInstance.get("/auth/checkme");
       // convert res to json later
-      console.log("Check auth response", res.data);
+      console.log("Check auth response", res.user);
 
       set({ authUser: res.data.user });
     } catch (error) {
@@ -27,37 +26,39 @@ export const useAuthStore = create((set) => ({
 
   signup: async (data) => {
     set({ isSigninUp: true });
+    console.log("signup data ", data);
     try {
-      const res = await axiosInsntance.post("/auth/resgister", data);
+      const res = await axiosInstance.post("/auth/register", data);
       set({ authUser: res.data.user });
 
       toast.success(res.data.message);
     } catch (error) {
-      console.log("Error login", error);
-      toast.error("Error loggin");
+      console.log("Failed to signup", error);
+      toast.error("Error Signup user");
     } finally {
       set({ isSigninUp: false });
     }
   },
 
   login: async (data) => {
-    set({ isLoggedIn: true });
+    console.log("login data ", data);
+    set({ isLoggingIn: true });
     try {
-      const res = await axiosInsntance.post("/auth/login", data);
+      const res = await axiosInstance.post("/auth/login", data);
       set({ authUser: res.data.user });
       toast.success(res.data.user);
     } catch (error) {
       console.log("Error login user", error);
       toast.error("Error login user");
     } finally {
-      set({ isLoggedIn: false });
+      set({ isLoggingIn: false });
     }
   },
   logout: async () => {
     try {
-      await axiosInsntance.post("/auth/logout");
+      await axiosInstance.post("/auth/logout");
       set({ authUser: null });
-      toast.success("Logout success")
+      toast.success("Logout success");
     } catch (error) {
       console.log("Error logout", error);
       toast.error("Error logout user");

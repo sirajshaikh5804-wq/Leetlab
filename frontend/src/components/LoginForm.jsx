@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod'
+import { useAuthStore } from '../store/useAuthStore';
 
 import { Link } from 'react-router-dom'
 import {
@@ -20,6 +21,8 @@ const LoginSchema = z.object({
 })
 
 const LoginForm = () => {
+    const { login, isLoggingIn } = useAuthStore()
+
     const [showPassword, setShowPassword] = useState(false)
 
     const {
@@ -31,7 +34,13 @@ const LoginForm = () => {
     })
 
     const onSubmit = async (data) => {
-        console.log(data);
+        try {
+            await login(data)
+            console.log('Login data', data);
+
+        } catch (error) {
+            console.error("error Login", error)
+        }
     }
     return (
         <div className="flex flex-col justify-center items-center p-6 sm:p-12">
@@ -109,17 +118,16 @@ const LoginForm = () => {
                     <button
                         type="submit"
                         className="btn btn-primary w-full"
-                    // disabled={isSigninUp}
+                        disabled={isLoggingIn}
                     >
-                        {'Login'}
-                        {/* {isSigninUp ? (
-                <>
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                  Loading...
-                </>
-              ) : (
-                "Sign in"
-              )} */}
+                        {isLoggingIn ? (
+                            <>
+                                <Loader2 className="h-5 w-5 animate-spin" />
+                                Loading...
+                            </>
+                        ) : (
+                            "Sign in"
+                        )}
                     </button>
                 </form>
 
