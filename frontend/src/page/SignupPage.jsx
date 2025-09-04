@@ -1,6 +1,6 @@
 
 import AuthImagePattern from '../components/AuthImagePattern'
-import SignupForm from '../components/SignupForm';
+import SignupForm from './templates/SignupForm';
 
 
 

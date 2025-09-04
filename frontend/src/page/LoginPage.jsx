@@ -1,5 +1,5 @@
 import React from 'react'
-import LoginForm from '../components/LoginForm'
+import LoginForm from './templates/LoginForm'
 import AuthImagePattern from '../components/AuthImagePattern'
 const LoginPage = () => {
   return (
