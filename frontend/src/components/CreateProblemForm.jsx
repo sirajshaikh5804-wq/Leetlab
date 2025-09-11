@@ -514,7 +514,7 @@ public class Main {
 
 const CreateProblemForm = () => {
   const [sampleType, setSampleType] = useState("DP"); // Default to array problem
-const navigation = useNavigate();
+  const navigation = useNavigate();
   const {
     register,
     control,
@@ -565,14 +565,14 @@ const navigation = useNavigate();
   });
 
   const [isLoading, setIsLoading] = useState(false);
+
   const onSubmit = async (value) => {
     try {
       // stringify the data
       setIsLoading(true);
       const res = await axiosInstance.post("/problems/create-problem", value);
-      
       console.log(res.data);
-      toast.success(res.data.message);
+      toast.success(res.data.message || "Problem Created Successfully 🔥");
       navigation("/");
     } catch (error) {
       console.log("Error creating problem", error);
@@ -608,18 +608,16 @@ const navigation = useNavigate();
               <div className="join">
                 <button
                   type="button"
-                  className={`btn join-item ${
-                    sampleType === "DP" ? "btn-active" : ""
-                  }`}
+                  className={`btn join-item ${sampleType === "DP" ? "btn-active" : ""
+                    }`}
                   onClick={() => setSampleType("DP")}
                 >
                   DP Problem
                 </button>
                 <button
                   type="button"
-                  className={`btn join-item ${
-                    sampleType === "string" ? "btn-active" : ""
-                  }`}
+                  className={`btn join-item ${sampleType === "string" ? "btn-active" : ""
+                    }`}
                   onClick={() => setSampleType("string")}
                 >
                   String Problem
