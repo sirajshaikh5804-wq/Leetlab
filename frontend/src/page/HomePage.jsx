@@ -11,7 +11,7 @@ const HomePage = () => {
     getAllProblems()
   }, [getAllProblems])
 
-  console.log("Problems: ", problems);
+  // console.log("Problems: ", problems);
 
   if (isProblemLoading) {
     return (
