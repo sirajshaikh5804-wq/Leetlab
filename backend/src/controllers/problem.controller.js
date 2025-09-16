@@ -99,7 +99,15 @@ export const createProblem = async (req, res) => {
 
 export const getAllProblems = async (req, res) => {
   try {
-    const problems = await db.problem.findMany();
+    const problems = await db.problem.findMany({
+      include: {
+        solvedBy: {
+          where: {
+            userId: req.user.id,
+          },
+        },
+      },
+    });
 
     if (!problems) {
       return res.status(404).json({
@@ -196,6 +204,6 @@ export const getAllProblemsSolvedByUser = async (req, res) => {
     });
   } catch (error) {
     console.log(`error fetching problems`, error);
-    res.status(500).json({ error: "Failed to fetch problem", });
+    res.status(500).json({ error: "Failed to fetch problem" });
   }
 };
