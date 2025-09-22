@@ -200,7 +200,7 @@ const ProblemTable = ({ problems }) => {
       </div>
 
       {/* Pagination */}
-      <div className="flex justify-center mt-6 gap-2" >
+      <div className="flex justify-center items-center mt-6 gap-2" >
 
         <MoveLeftIcon
           className="btn btn-sm btn-ghost cursor-pointer "
@@ -210,7 +210,7 @@ const ProblemTable = ({ problems }) => {
           {currentPage}/{totalPages}
         </span>
         <MoveRightIcon
-        className="btn btn-sm btn-ghost cursor-pointer "
+          className="btn btn-sm btn-ghost cursor-pointer "
           disabled={currentPage === totalPages}
           onClick={() => setCurrentPage((prev) => prev + 1)}
         />
