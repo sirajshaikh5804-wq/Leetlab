@@ -15,6 +15,7 @@ import {
     Users,
     ThumbsUp,
     Home,
+    Send
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 
@@ -24,18 +25,20 @@ import { useProblemStore } from "../store/useProblemStore";
 const ProblemPage = () => {
     const { id } = useParams()
     const { getProblemById, problem, isProblemLoading } = useProblemStore()
-    const [code, setCode] = useState("")
+    const [code, setCode] = useState(problem?.codeSnippets["JAVASCRIPT"])
     const [activeTab, setActiveTab] = useState("description")
-    const [selectedLanguage, setSelectedLanguage] = useState("javascript")
+    const [selectedLanguage, setSelectedLanguage] = useState("JAVASCRIPT")
     const [isBookmarked, setIsBookmarked] = useState(false)
     const [testCases, setTestCases] = useState([])
 
 
     const submissionCount = 10;
+    const submission = false
 
     const handleLanguageChange = (e) => {
         const lang = e.target.value;
         setSelectedLanguage(lang)
+        setCode(problem.codeSnippets?.[lang] || "")
     }
 
     const renderTabContent = () => {
@@ -118,6 +121,7 @@ const ProblemPage = () => {
         }
     };
 
+
     useEffect(() => {
         getProblemById(id)
     }, [id, getProblemById])
@@ -136,12 +140,7 @@ const ProblemPage = () => {
     }, [problem, selectedLanguage])
 
     return problem && (
-        <div className="min-h-screen bg-gradient-to-br from-base-300 to-base-200">
-            {/* {isProblemLoading ? (
-                <div className="flex items-center justify-center h-screen">
-                    <span className="loading loading-spinner text-primary"></span>
-                </div>
-            ) : problem ? ( */}
+        <div className="min-h-screen bg-gradient-to-br from-base-300 to-base-200 max-w-7xl w-full">
             <nav className="navbar bg-base-100 shadow-lg px-4">
                 <div className="flex-1 gap-2">
                     <Link to={"/"} className="flex items-center gap-2 text-primary">
@@ -174,15 +173,17 @@ const ProblemPage = () => {
 
                 <div className="flex-none gap-4">
                     <button
-                        className={`btn btn-ghost btn-circle ${isBookmarked ? "text-primary" : ""
-                            }`}
+                        className={`btn btn-ghost btn-circle tooltip tooltip-info  
+                            ${isBookmarked ? "text-primary" : ""} `}
+                        data-tip={isBookmarked ? "Unbookmark" : "Bookmark"}
                         onClick={() => setIsBookmarked(!isBookmarked)}
                     >
                         <Bookmark className="w-5 h-5" />
                     </button>
-                    <button className="btn btn-ghost btn-circle">
+                    <button className="btn btn-ghost btn-circle tooltip tooltip-top" data-tip="Share">
                         <Share2 className="w-5 h-5" />
                     </button>
+
                     <select
                         className="select select-bordered select-primary w-40 cursor-pointer"
                         value={selectedLanguage}
@@ -190,7 +191,7 @@ const ProblemPage = () => {
                     >
                         {Object.keys(problem.codeSnippets || {}).map((lang) => (
                             <option key={lang} value={lang}>
-                                {lang.charAt(0).toUpperCase() + lang.slice(1)}
+                                {lang}
                             </option>
                         ))}
                     </select>
@@ -199,7 +200,7 @@ const ProblemPage = () => {
 
             <div className="container mx-auto p-4">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div className=" bg-base-100 shadow-xl">
+                    <div className="card bg-base-100 shadow-xl">
                         <div className="card-body p-0">
                             <div className="tabs tabs-border">
                                 <button
@@ -235,12 +236,92 @@ const ProblemPage = () => {
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            {/* ) : (
-                <p className="text-center text-error">Problem not found.</p>
-            )} */}
+                    <div className="card bg-base-100 shadow-xl ">
+                        <div className="card-body p-0">
+                            <div className="tabs tabs-bordered">
+                                <button className="tab tab-active gap-2">
+                                    <Terminal className="w-4 h-4" />
+                                    Code Editor
+                                </button>
+                            </div>
 
+                            <div className="h-[600px] w-full">
+                                <Editor
+                                    height={"100%"}
+                                    language={selectedLanguage.toLowerCase()}
+                                    defaultValue={problem.codeSnippets?.["JAVASCRIPT"]}
+                                    theme="vs-dark"
+                                    value={code}
+                                    onChange={(value) => setCode(value || "")}
+                                    options={
+                                        {
+                                            minimap: { enabled: false },
+                                            fontSize: 22,
+                                            lineNumbers: "on",
+                                            roundedSelection: false,
+                                            scrollBeyondLastLine: false,
+                                            readOnly: false,
+                                            automaticLayout: true,
+
+                                        }
+                                    }
+                                />
+                            </div>
+
+                            <div className="p-4 border-t border-base-300 bg-base-200">
+                                <div className="flex justify-between items-center">
+                                    <button
+                                        className={`btn btn-primary gap-2 }`}
+                                        onClick={() => { }}
+                                    >
+                                        <Play className="w-4 h-4" />
+                                        Run Code
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="btn btn-success gap-2"
+                                    >
+                                        <Send className="w-4 h-4" /> Submit Solution
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="card bg-base-100 shadow-xl mt-6">
+                    <div className="card-body">
+                        {
+                            submission ? (<h1>Submission Data</h1>)
+                                : <>
+                                    <div className="flex items-center justify-between mb-6">
+                                        <h3 className="text-xl font-bold">Test Cases</h3>
+                                    </div>
+                                    <div className="overflow-x-auto">
+                                        <table className="table table-zebra w-full">
+                                            <thead>
+                                                <tr>
+                                                    <th>Input</th>
+                                                    <th>Expected Output</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {testCases.map((testcase, i) => (
+                                                    <tr key={i}>
+                                                        <td className="font-mono">{testcase.input}</td>
+                                                        <td className="font-mono">{testcase.output}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </>
+                        }
+                    </div>
+
+                </div>
+
+            </div>
         </div>
     );
 

@@ -1,6 +1,6 @@
 {
     "title": "Add Two Numbers",
-    "description": "Given two numbers a and b add them up and return the outout",
+    "description": "Given two numbers a and b add them up and return the output",
     "difficulty": "EASY",
     "tags": [
         "math",
