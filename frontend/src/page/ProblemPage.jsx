@@ -20,6 +20,9 @@ import {
 import { Link, useParams } from "react-router-dom";
 
 import { useProblemStore } from "../store/useProblemStore";
+import { useExecutionStore } from "../store/useExecutionStore";
+
+import { getLanguageIdByName } from "../lib/getLanguage";
 
 
 const ProblemPage = () => {
@@ -31,9 +34,22 @@ const ProblemPage = () => {
     const [isBookmarked, setIsBookmarked] = useState(false)
     const [testCases, setTestCases] = useState([])
 
-
+    const { executeCode, submission, isExecuting } = useExecutionStore()
     const submissionCount = 10;
-    const submission = false
+
+    const handleRunCode = (e) => {
+        e.preventDefault()
+        try {
+            const language_id = getLanguageIdByName(selectedLanguage)
+            const stdin = problem.testCases.map((tc) => tc.input)
+            const expected_outputs = problem.testCases.map((tc) => tc.output)
+            // const problemId = problem.id
+            executeCode(code, language_id, stdin, expected_outputs, id)
+
+        } catch (error) {
+            console.log("Error executing code", error);
+        }
+    }
 
     const handleLanguageChange = (e) => {
         const lang = e.target.value;
@@ -120,7 +136,6 @@ const ProblemPage = () => {
                 return null;
         }
     };
-
 
     useEffect(() => {
         getProblemById(id)
@@ -272,10 +287,19 @@ const ProblemPage = () => {
                                 <div className="flex justify-between items-center">
                                     <button
                                         className={`btn btn-primary gap-2 }`}
-                                        onClick={() => { }}
+                                        onClick={handleRunCode}
                                     >
-                                        <Play className="w-4 h-4" />
-                                        Run Code
+                                        {isExecuting ? (
+                                            <>
+                                                <span className="loading w-4 h-4"></span>
+                                                Running...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Play className="w-4 h-4" />
+                                                Run Code
+                                            </>
+                                        )}
                                     </button>
                                     <button
                                         type="submit"
@@ -292,7 +316,7 @@ const ProblemPage = () => {
                 <div className="card bg-base-100 shadow-xl mt-6">
                     <div className="card-body">
                         {
-                            submission ? (<h1>Submission Data</h1>)
+                            submission ? (<h1>Submission Data: <pre>{JSON.stringify(submission, null, 1)}</pre></h1>)
                                 : <>
                                     <div className="flex items-center justify-between mb-6">
                                         <h3 className="text-xl font-bold">Test Cases</h3>
