@@ -23,6 +23,7 @@ import { useProblemStore } from "../store/useProblemStore";
 import { useExecutionStore } from "../store/useExecutionStore";
 
 import { getLanguageIdByName } from "../lib/getLanguage";
+import SubmissionResults from "../components/SubmissionResults";
 
 
 const ProblemPage = () => {
@@ -39,6 +40,7 @@ const ProblemPage = () => {
 
     const handleRunCode = (e) => {
         e.preventDefault()
+        console.log("submission after Run code:", submission);
         try {
             const language_id = getLanguageIdByName(selectedLanguage)
             const stdin = problem.testCases.map((tc) => tc.input)
@@ -316,7 +318,7 @@ const ProblemPage = () => {
                 <div className="card bg-base-100 shadow-xl mt-6">
                     <div className="card-body">
                         {
-                            submission ? (<h1>Submission Data: <pre>{JSON.stringify(submission, null, 1)}</pre></h1>)
+                            submission ? (<SubmissionResults submission={submission} />)
                                 : <>
                                     <div className="flex items-center justify-between mb-6">
                                         <h3 className="text-xl font-bold">Test Cases</h3>
