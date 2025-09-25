@@ -21,6 +21,7 @@ import { Link, useParams } from "react-router-dom";
 
 import { useProblemStore } from "../store/useProblemStore";
 import { useExecutionStore } from "../store/useExecutionStore";
+import { usesubmissionStore } from "../store/useSubmissionStore";
 
 import { getLanguageIdByName } from "../lib/getLanguage";
 import SubmissionResults from "../components/SubmissionResults";
@@ -36,11 +37,14 @@ const ProblemPage = () => {
     const [testCases, setTestCases] = useState([])
 
     const { executeCode, submission, isExecuting } = useExecutionStore()
-    const submissionCount = 10;
+
+    const { isSubmissionLoading, submission: submissions, submissionCount, //naming submission as submissions coz due to deprication
+        getSubmissionForProblem, getSubmissionCountForProblem } = usesubmissionStore()
+
+    console.log("submission after Run code:", submission);
 
     const handleRunCode = (e) => {
         e.preventDefault()
-        console.log("submission after Run code:", submission);
         try {
             const language_id = getLanguageIdByName(selectedLanguage)
             const stdin = problem.testCases.map((tc) => tc.input)
@@ -141,7 +145,8 @@ const ProblemPage = () => {
 
     useEffect(() => {
         getProblemById(id)
-    }, [id, getProblemById])
+        getSubmissionCountForProblem(id)
+    }, [id, getProblemById, getSubmissionCountForProblem])
 
     useEffect(() => {
         if (problem) {
