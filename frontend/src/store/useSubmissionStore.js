@@ -33,6 +33,8 @@ export const usesubmissionStore = create((set) => ({
         } catch (error) {
             console.log("Error getting submission for problem", error);
             toast.error("Error getting submission")
+        }finally{
+            set({isSubmissionLoading:false})
         }
     },
 
@@ -44,6 +46,8 @@ export const usesubmissionStore = create((set) => ({
         } catch (error) {
             console.log("Error getting submission count", error);
             toast.error("Error getting submission count")
+        }finally{
+            set({isSubmissionLoading: false})
         }
     }
 }))

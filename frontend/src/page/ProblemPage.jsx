@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Editor from "@monaco-editor/react";
 import {
     Play,
@@ -25,6 +25,7 @@ import { usesubmissionStore } from "../store/useSubmissionStore";
 
 import { getLanguageIdByName } from "../lib/getLanguage";
 import SubmissionResults from "../components/SubmissionResults";
+import SubmissionsList from "../components/SubmissionsList";
 
 
 const ProblemPage = () => {
@@ -43,19 +44,28 @@ const ProblemPage = () => {
 
     console.log("submission after Run code:", submission);
 
-    const handleRunCode = (e) => {
-        e.preventDefault()
-        try {
-            const language_id = getLanguageIdByName(selectedLanguage)
-            const stdin = problem.testCases.map((tc) => tc.input)
-            const expected_outputs = problem.testCases.map((tc) => tc.output)
-            // const problemId = problem.id
-            executeCode(code, language_id, stdin, expected_outputs, id)
 
-        } catch (error) {
-            console.log("Error executing code", error);
-        }
-    }
+const handleRunCode = async (e) => {
+  e.preventDefault();
+
+  try {
+    const language_id = getLanguageIdByName(selectedLanguage);
+    const stdin = problem.testCases.map(tc => tc.input);
+    const expected_outputs = problem.testCases.map(tc => tc.output);
+
+    // Wait for Judge0 + DB
+    await executeCode(code, language_id, stdin, expected_outputs, id);
+
+    // Refresh real submissions
+    await getSubmissionForProblem(id);
+    await getSubmissionCountForProblem(id);
+
+
+  } catch (err) {
+    console.error("Error executing code", err);
+  }
+};
+
 
     const handleLanguageChange = (e) => {
         const lang = e.target.value;
@@ -119,7 +129,7 @@ const ProblemPage = () => {
                     </div>
                 );
             case "submissions":
-                return <div className="p-4 text-center text-base-content/70">No Submission</div>;
+                return <div className="p-4 text-center text-base-content/70"><SubmissionsList submissions={submissions} isSubmissionLoading={isSubmissionLoading} /></div>;
 
             // return <SubmissionsList submissions={submissions} isLoading={isSubmissionsLoading} />;
             case "discussion":
@@ -160,6 +170,26 @@ const ProblemPage = () => {
             )
         }
     }, [problem, selectedLanguage])
+
+    // useEffect(() => {
+    //     if (activeTab === "submissions" && id) {
+    //         getSubmissionForProblem(id)
+    //     }
+    // }, [activeTab, id, getSubmissionForProblem])
+    // console.log("Submission Tab data",submissions);
+
+/**Vibe code */
+// stable fetch function
+const fetchSubmissions = useCallback(() => {
+  if (activeTab === "submissions" && id) {
+    getSubmissionForProblem(id);
+  }
+}, [activeTab, id, getSubmissionForProblem]);
+
+useEffect(() => {
+  fetchSubmissions();
+}, [fetchSubmissions]);
+/* */
 
     return problem && (
         <div className="min-h-screen bg-gradient-to-br from-base-300 to-base-200 max-w-7xl w-full">
