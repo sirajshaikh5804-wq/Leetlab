@@ -1,23 +1,26 @@
 //ProblemTable.jsx
 import React, { useState, useMemo } from "react";
-import { useAuthStore } from "../store/useAuthStore";
 import { Link } from "react-router-dom";
 import { Bookmark, PencilIcon, TrashIcon, Plus, OptionIcon, MoveLeftIcon, MoveRightIcon, Loader, Loader2 } from "lucide-react";
-
-// import { useActions } from "../store/useActionStore";
+import { useAuthStore } from "../store/useAuthStore";
 import { useProblemStore } from "../store/useProblemStore";
+import PlaylistModal from "./Playlists/PlaylistModal";
+import { usePlaylistStore } from "../store/usePlaylistStore";
 
 
 const ProblemTable = ({ problems }) => {
   console.log("Problems: ", problems);
 
   const { authUser } = useAuthStore()
+  const { deleteProblem, isDeletingProblem } = useProblemStore();
+  const {createPlaylist} = usePlaylistStore()
+  // const createPlaylist = usePlaylistStore((state) => state.createPlaylist);
+  
   const [search, setSearch] = useState("")
   const [difficulty, setDifficulty] = useState("ALL")
   const [selectedTag, setSelectedTag] = useState("ALL")
   const [currentPage, setCurrentPage] = useState(1)
 
-  const { deleteProblem,isDeletingProblem } = useProblemStore();
 
   // Extract all unique tags from problems
   const allTags = useMemo(() => {
@@ -45,21 +48,37 @@ const ProblemTable = ({ problems }) => {
     return filteredProblems.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)  // ((1-1)*5, (1*5)) =>(0,5) | ((5-1)*5, (5*5)) =>(20,25)
   }, [filteredProblems, currentPage])
 
-  console.log("paginatedProblems", paginatedProblems);
+  // console.log("paginatedProblems", paginatedProblems);
+  const [PlaylistModalOpen, setPlaylistModalOpen] = useState(false)
 
-  const handleDelete = async (id) => { 
+  const handleDelete = async (id) => {
     deleteProblem(id)
   }
 
-  const handleAddToPlaylist = (id) => { }
+  const handleAddToPlaylist = (id) => {
+    console.log(id);
+    setPlaylistModalOpen(true)
+  }
+
+
+const handleCreatePlaylist = async () => {
+  const playlistData = { name: `My Playlist ${Date.now()}`, description: "A new playlist" };
+  try {
+    const res = await createPlaylist(playlistData);
+    console.log("Created playlist data:", res);
+  } catch (err) {
+    console.error("Error creating playlist:", err);
+  }
+};
 
   return (
     <div className="w-full max-w-6xl mx-auto mt-10">
+      <PlaylistModal />
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Problems</h2>
         <button
           className="btn btn-primary gap-2"
-          onClick={() => { }}
+          onClick={handleCreatePlaylist}
         >
           <Plus className="w-4 h-4" />
           Create Playlist
@@ -169,33 +188,41 @@ const ProblemTable = ({ problems }) => {
                           </span>
                         </td>
                         <td>
-                          <div className="flex flex-col md:flex-row gap-2 items-start md:items-center">
+                          <div className="flex flex-col md:flex-row gap-2 lg:items-center md:items-center ">
                             {authUser?.role === "ADMIN" && (
                               <div className="flex gap-2">
-                                <button
-                                  onClick={() => handleDelete(problem.id)}
-                                  disabled={isDeletingProblem}
-                                  className="btn btn-sm btn-error"
-                                >
-                                {
-                                  isDeletingProblem 
-                                    ? <Loader2 className="animate-spin h-4 w-4" />
-                                    : <TrashIcon className="w-4 h-4 text-white" />
+                                <div className="tooltip" data-tip="Delete">
+                                  <button
+                                    onClick={() => handleDelete(problem.id)}
+                                    disabled={isDeletingProblem}
+                                    className="btn btn-sm btn-error"
+                                  >
+                                    {
+                                      isDeletingProblem
+                                        ? <Loader2 className="animate-spin h-4 w-4" />
+                                        : <TrashIcon className="w-4 h-4 text-white" />
 
-                                }
-                                </button>
-                                <button disabled className="btn btn-sm btn-warning">
-                                  <PencilIcon className="w-4 h-4 text-white" />
-                                </button>
+                                    }
+                                  </button>
+                                </div>
+                                <div className="tooltip" data-tip="Edit">
+                                  <button className="tooltip-top btn btn-sm btn-warning" data-tip="Edit">
+                                    <PencilIcon className="w-4 h-4 text-white" />
+                                  </button>
+                                </div>
+
                               </div>
                             )}
-                            <button
-                              className="btn btn-sm btn-outline flex gap-2 items-center"
-                              onClick={() => handleAddToPlaylist(problem.id)}
-                            >
-                              <Bookmark className="w-4 h-4" />
-                              <span className="hidden sm:inline">Save to Playlist</span>
-                            </button>
+                            <div className="tooltip tooltip-top" data-tip="Add To Playlist">
+
+                              <button
+                                className="btn btn-circle btn-info btn-outline"
+                                onClick={() => handleAddToPlaylist(problem.id)}
+                              >
+                                <Bookmark className="w-4 h-4" />
+                                <span className="hidden"></span>
+                              </button>
+                            </div>
                           </div>
                         </td>
                       </tr>

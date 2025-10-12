@@ -1,10 +1,10 @@
 import { db } from "../lib/db.js";
 
 export const createPlaylist = async (req, res) => {
-  try {
-    const { name, description } = req.body;
-    const userId = req.user.id;
+  const { name, description } = req.body;
+  const userId = req.user.id;
 
+  try {
     const playlist = await db.playlist.create({
       data: {
         name,
@@ -13,14 +13,19 @@ export const createPlaylist = async (req, res) => {
       },
     });
 
-    res.status(200).json({
+    res.status(201).json({
       success: true,
       message: "playlist created successfully",
       playlist,
     });
   } catch (error) {
-    console.error("Error creating playlist", error);
-    res.status(500).json({ error: "Failed to create playlist" });
+    if (error.code === "P2002") {
+      return res.status(400).json({
+        error: "You already have a playlist with this name."
+      });
+    }
+    console.error("Error creating playlist:", error);
+    res.status(500).json({ error: "Server error" });
   }
 };
 
@@ -114,7 +119,7 @@ export const deletePlaylist = async (req, res) => {
     });
     res.status(200).json({
       success: true,
-      message:`remove playlist`,
+      message: `remove playlist`,
       deletePlaylist,
     });
   } catch (error) {
