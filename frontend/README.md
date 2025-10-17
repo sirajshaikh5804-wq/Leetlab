@@ -1,12 +1,66 @@
-# React + Vite
+# 🧠 LeetLab – A Leetcode-Inspired Coding Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> **LeetLab** is a full-stack, Leetcode-style coding practice platform that enables developers to **solve coding problems**, **run and submit code**, and **track performance** across multiple programming languages — all within a modern, responsive UI.
 
-Currently, two official plugins are available:
+---
+## 📸 Screenshots
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+| Home / Problem List | Problem Editor |
+|----------------------|----------------|
+| ![Home Dashboard](./src/assets/Home.png) | ![Code Editor](./src/assets/ProblemEditor.png) |
 
-## Expanding the ESLint configuration
+| Submissions  | TestCases |
+|----------------------|----------------|
+| ![Submission](./src/assets/Submission.png) | ![Test Cases](./src/assets/TestCases.png) |
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+|Create/Add Problem (Admin Only)  | Starter Code |
+|----------------------|----------------|
+| ![1](./src/assets/CreateProblem1.png) | ![2](./src/assets/CreateProblem2.png) |
+| ![3](./src/assets/CreateProblem3.png) |
+
+
+---
+
+## 🚀 Tech Stack
+
+**Frontend:** React.js, Tailwind CSS, DaisyUI, Zustand, Monaco Editor  
+**Backend:** Node.js, Express.js, Prisma ORM, Zod, JWT Authentication  
+**Database:** PostgreSQL (Dockerized)  
+**Code Execution:** Judge0 API (Dockerized)  
+**Containerization:** Docker & Docker Compose  
+**Version Control:** Git + GitHub  
+
+---
+
+## 🌟 Features
+
+### 👩‍💻 User Features
+- Solve coding problems in **JavaScript**, **Python**, and **Java**
+- **Run & Submit Code** in real-time using the **Judge0 API**
+- **Track submissions** with details like runtime, memory usage, and verdict (Accepted, Wrong Answer, etc.)
+- **Save problems to playlists** for revisiting later
+- **Filter problems** by difficulty, tags, and title for quick navigation
+- Access **examples, constraints, and editorial hints**
+- Beautiful **dark mode interface** with Tailwind CSS + DaisyUI
+- Fully **responsive UI** optimized for desktop and mobile
+
+### 🧑‍💼 Admin Features
+- Dedicated **Admin Dashboard** with full CRUD functionality
+- Create, edit, and delete problems dynamically
+- Manage test cases, problem descriptions, tags, and difficulty levels
+- Monitor user submissions and platform activity
+
+---
+
+## 🧩 Core Highlights
+
+- **Real-Time Code Execution** via Dockerized Judge0 API  
+- **Schema-based validation** using Zod for strong input handling  
+- **JWT-based authentication** for secure and scalable session management  
+- **Prisma ORM** with PostgreSQL for fast, type-safe queries  
+- **Global state management** powered by Zustand for optimal React performance  
+- **Containerized backend and database** using Docker for easy deployment and scalability  
+
+---
+
+
