@@ -1,11 +1,12 @@
 //ProblemTable.jsx
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Bookmark, PencilIcon, TrashIcon, Plus, OptionIcon, MoveLeftIcon, MoveRightIcon, Loader, Loader2 } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useProblemStore } from "../store/useProblemStore";
 import PlaylistModal from "./Playlists/PlaylistModal";
 import { usePlaylistStore } from "../store/usePlaylistStore";
+import CreatePlaylistModal from "./playlists/CreatePlaylistModal";
 
 
 const ProblemTable = ({ problems }) => {
@@ -13,14 +14,27 @@ const ProblemTable = ({ problems }) => {
 
   const { authUser } = useAuthStore()
   const { deleteProblem, isDeletingProblem } = useProblemStore();
-  const {createPlaylist} = usePlaylistStore()
+  const { createPlaylist } = usePlaylistStore()
   // const createPlaylist = usePlaylistStore((state) => state.createPlaylist);
   
   const [search, setSearch] = useState("")
   const [difficulty, setDifficulty] = useState("ALL")
   const [selectedTag, setSelectedTag] = useState("ALL")
   const [currentPage, setCurrentPage] = useState(1)
+  // const [isCreatePlaylistModalOpen, setCreatePlaylistModalOpen] = useState(false)
 
+  const ModalRef = useRef(null);
+  const openModal = () => {
+    if (ModalRef.current) {
+      ModalRef.current.showModal();
+    }
+  };
+
+  const closeModal = () => {
+    if (ModalRef.current) {
+      ModalRef.current.close();
+    }
+  };
 
   // Extract all unique tags from problems
   const allTags = useMemo(() => {
@@ -49,36 +63,27 @@ const ProblemTable = ({ problems }) => {
   }, [filteredProblems, currentPage])
 
   // console.log("paginatedProblems", paginatedProblems);
-  const [PlaylistModalOpen, setPlaylistModalOpen] = useState(false)
 
   const handleDelete = async (id) => {
     deleteProblem(id)
   }
 
-  const handleAddToPlaylist = (id) => {
-    console.log(id);
-    setPlaylistModalOpen(true)
-  }
-
-
-const handleCreatePlaylist = async () => {
-  const playlistData = { name: `My Playlist ${Date.now()}`, description: "A new playlist" };
-  try {
-    const res = await createPlaylist(playlistData);
-    console.log("Created playlist data:", res);
-  } catch (err) {
-    console.error("Error creating playlist:", err);
-  }
-};
+  const handleCreatePlaylist = async (playlistData) => {
+    try {
+      const res = await createPlaylist(playlistData);
+      console.log("Created playlist data:", res);
+    } catch (err) {
+      console.error("Error creating playlist:", err);
+    }
+  };
 
   return (
     <div className="w-full max-w-6xl mx-auto mt-10">
-      <PlaylistModal />
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Problems</h2>
         <button
           className="btn btn-primary gap-2"
-          onClick={handleCreatePlaylist}
+          onClick={openModal}
         >
           <Plus className="w-4 h-4" />
           Create Playlist
@@ -258,6 +263,17 @@ const handleCreatePlaylist = async () => {
           onClick={() => setCurrentPage((prev) => prev + 1)}
         />
       </div>
+
+      {/* Modal */}
+      {/* <CreatePlaylistModal
+        isOpen={isCreatePlaylistModalOpen}
+        onClose={() => setCreatePlaylistModalOpen(false)}
+      /> */}
+      <CreatePlaylistModal
+        ModalRef={ModalRef}
+        closeModal={closeModal}
+        onSubmit={handleCreatePlaylist}
+      />
     </div>
   )
 }

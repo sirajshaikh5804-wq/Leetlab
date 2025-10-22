@@ -15,8 +15,8 @@
 
 | Create/Add Problem (Admin Only)  | Starter Code |
 |----------------------|----------------|
-| ![1](./frontend/src/assets/CreateProblem1.png) | ![2](./frontend/src/assets/CreateProblem2.png) |
-| ![3](./frontend/src/assets/CreateProblem3.png) |
+| ![1](./frontend/src/assets/CreateProblem1.png) | ![2](./frontend/src/assets/CreateProblem2.png)
+ ![3](./frontend/src/assets/CreateProblem3.png) |
 
 
 
