@@ -45,26 +45,26 @@ const ProblemPage = () => {
     console.log("submission after Run code:", submission);
 
 
-const handleRunCode = async (e) => {
-  e.preventDefault();
+    const handleRunCode = async (e) => {
+        e.preventDefault();
 
-  try {
-    const language_id = getLanguageIdByName(selectedLanguage);
-    const stdin = problem.testCases.map(tc => tc.input);
-    const expected_outputs = problem.testCases.map(tc => tc.output);
+        try {
+            const language_id = getLanguageIdByName(selectedLanguage);
+            const stdin = problem.testCases.map(tc => tc.input);
+            const expected_outputs = problem.testCases.map(tc => tc.output);
 
-    // Wait for Judge0 + DB
-    await executeCode(code, language_id, stdin, expected_outputs, id);
+            // Wait for Judge0 + DB
+            await executeCode(code, language_id, stdin, expected_outputs, id);
 
-    // Refresh real submissions
-    await getSubmissionForProblem(id);
-    await getSubmissionCountForProblem(id);
+            // Refresh real submissions
+            await getSubmissionForProblem(id);
+            await getSubmissionCountForProblem(id);
 
 
-  } catch (err) {
-    console.error("Error executing code", err);
-  }
-};
+        } catch (err) {
+            console.error("Error executing code", err);
+        }
+    };
 
 
     const handleLanguageChange = (e) => {
@@ -178,18 +178,18 @@ const handleRunCode = async (e) => {
     // }, [activeTab, id, getSubmissionForProblem])
     // console.log("Submission Tab data",submissions);
 
-/**Vibe code */
-// stable fetch function
-const fetchSubmissions = useCallback(() => {
-  if (activeTab === "submissions" && id) {
-    getSubmissionForProblem(id);
-  }
-}, [activeTab, id, getSubmissionForProblem]);
+    /**Vibe code */
+    // stable fetch function
+    const fetchSubmissions = useCallback(() => {
+        if (activeTab === "submissions" && id) {
+            getSubmissionForProblem(id);
+        }
+    }, [activeTab, id, getSubmissionForProblem]);
 
-useEffect(() => {
-  fetchSubmissions();
-}, [fetchSubmissions]);
-/* */
+    useEffect(() => {
+        fetchSubmissions();
+    }, [fetchSubmissions]);
+    /* */
 
     return problem && (
         <div className="min-h-screen bg-gradient-to-br from-base-300 to-base-200 max-w-7xl w-full">
@@ -289,13 +289,45 @@ useEffect(() => {
                         </div>
                     </div>
                     <div className="card bg-base-100 shadow-xl ">
-                        <div className="card-body p-0">
-                            <div className="tabs tabs-bordered">
-                                <button className="tab tab-active gap-2">
-                                    <Terminal className="w-4 h-4" />
-                                    Code Editor
-                                </button>
+                            <div className="flex items-center justify-between bg-base-200 p-3 rounded-xl shadow-sm">
+                                {/* Left side — Code Editor tab */}
+                                <div className="tabs tabs-bordered">
+                                    <button className="tab tab-active gap-2 font-semibold text-base-content">
+                                        <Terminal className="w-4 h-4" />
+                                        Code Editor
+                                    </button>
+                                </div>
+
+                                {/* Right side — Run + Submit buttons */}
+                                <div className="flex items-center gap-3">
+                                    <button
+                                        className="btn btn-primary gap-2"
+                                        onClick={handleRunCode}
+                                        disabled={isExecuting}
+                                    >
+                                        {isExecuting ? (
+                                            <>
+                                                <span className="loading loading-spinner loading-sm"></span>
+                                                Running...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Play className="w-4 h-4" />
+                                                Run
+                                            </>
+                                        )}
+                                    </button>
+
+                                    <button
+                                        type="submit"
+                                        className="btn btn-success gap-2"
+                                    >
+                                        <Send className="w-4 h-4" />
+                                        Submit
+                                    </button>
+                                </div>
                             </div>
+
 
                             <div className="h-[600px] w-full">
                                 <Editor
@@ -319,35 +351,7 @@ useEffect(() => {
                                     }
                                 />
                             </div>
-
-                            <div className="p-4 border-t border-base-300 bg-base-200">
-                                <div className="flex justify-between items-center">
-                                    <button
-                                        className={`btn btn-primary gap-2 }`}
-                                        onClick={handleRunCode}
-                                    >
-                                        {isExecuting ? (
-                                            <>
-                                                <span className="loading w-4 h-4"></span>
-                                                Running...
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Play className="w-4 h-4" />
-                                                Run Code
-                                            </>
-                                        )}
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        className="btn btn-success gap-2"
-                                    >
-                                        <Send className="w-4 h-4" /> Submit Solution
-                                    </button>
-                                </div>
-                            </div>
                         </div>
-                    </div>
                 </div>
 
                 <div className="card bg-base-100 shadow-xl mt-6">
