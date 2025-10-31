@@ -4,9 +4,9 @@ import { Link } from "react-router-dom";
 import { Bookmark, PencilIcon, TrashIcon, Plus, OptionIcon, MoveLeftIcon, MoveRightIcon, Loader, Loader2 } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useProblemStore } from "../store/useProblemStore";
-import PlaylistModal from "./Playlists/PlaylistModal";
 import { usePlaylistStore } from "../store/usePlaylistStore";
 import CreatePlaylistModal from "./playlists/CreatePlaylistModal";
+import AddToPlaylistModal from "./playlists/AddToPlaylistModal";
 
 
 const ProblemTable = ({ problems }) => {
@@ -16,12 +16,13 @@ const ProblemTable = ({ problems }) => {
   const { deleteProblem, isDeletingProblem } = useProblemStore();
   const { createPlaylist } = usePlaylistStore()
   // const createPlaylist = usePlaylistStore((state) => state.createPlaylist);
-  
+
   const [search, setSearch] = useState("")
   const [difficulty, setDifficulty] = useState("ALL")
   const [selectedTag, setSelectedTag] = useState("ALL")
   const [currentPage, setCurrentPage] = useState(1)
   // const [isCreatePlaylistModalOpen, setCreatePlaylistModalOpen] = useState(false)
+  const [selectedProblemId, setSelectedProblemId] = useState(null)
 
   const ModalRef = useRef(null);
   const openModal = () => {
@@ -33,6 +34,20 @@ const ProblemTable = ({ problems }) => {
   const closeModal = () => {
     if (ModalRef.current) {
       ModalRef.current.close();
+    }
+  };
+
+  // AddToPlaylist Modal Ref and Handlers
+  const AddToPlaylistRef = useRef(null);
+
+  const openAddToPlaylistModal = () => {
+    if (AddToPlaylistRef.current) {
+      AddToPlaylistRef.current.showModal();
+    }
+  };
+  const closeAddToPlaylistModal = () => {
+    if (AddToPlaylistRef.current) {
+      AddToPlaylistRef.current.close();
     }
   };
 
@@ -71,10 +86,17 @@ const ProblemTable = ({ problems }) => {
   const handleCreatePlaylist = async (playlistData) => {
     try {
       const res = await createPlaylist(playlistData);
-      console.log("Created playlist data:", res);
+      // console.log("Created playlist data:", res);
+      return { success: true, data: res };
     } catch (err) {
-      console.error("Error creating playlist:", err);
+      return { success: false, message: err.message }
     }
+  };
+
+  const handleAddToPlaylist = async (problemId) => {
+    // Open the AddToPlaylistModal and pass the problemId to it.
+    openAddToPlaylistModal();
+    setSelectedProblemId(problemId);
   };
 
   return (
@@ -273,6 +295,11 @@ const ProblemTable = ({ problems }) => {
         ModalRef={ModalRef}
         closeModal={closeModal}
         onSubmit={handleCreatePlaylist}
+      />
+      <AddToPlaylistModal
+        ModalRef={AddToPlaylistRef}
+        closeModal={closeAddToPlaylistModal}
+        problemId={selectedProblemId}
       />
     </div>
   )

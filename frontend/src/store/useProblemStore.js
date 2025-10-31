@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios.js";
 import { toast } from "react-hot-toast";
-import { EraserIcon } from "lucide-react";
 
 export const useProblemStore = create((set, get) => ({
   problems: [],
@@ -29,7 +28,7 @@ export const useProblemStore = create((set, get) => ({
       set({ isProblemLoading: true });
       const res = await axiosInstance.get(`/problems/get-problem/${id}`);
       set({ problem: res.data.problem });
-      toast.success(res.data.message);
+      // toast.success(res.data.message);
     } catch (error) {
       console.log("Error getting problem By Id", error);
       toast.error("Error in getting problem by Id");

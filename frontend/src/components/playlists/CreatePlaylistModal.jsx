@@ -1,13 +1,21 @@
 import { X } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 const CreatePlaylistModal = ({ ModalRef, closeModal, onSubmit }) => {
   const { register, handleSubmit, formState: { errors }, reset } = useForm();
+  const [serverError, setServerError] = useState(null);
 
   const handleFormSubmit = async (data) => {
-    await onSubmit(data);
-    reset();
-    closeModal();
+    setServerError("");
+    const result = await onSubmit(data);
+
+    if (result.success) {
+      reset();
+      closeModal();
+    } else {
+      setServerError(result.message || "Failed to create playlist");
+    }
   };
 
   return (
@@ -42,10 +50,10 @@ const CreatePlaylistModal = ({ ModalRef, closeModal, onSubmit }) => {
               className={`input input-bordered w-full ${errors.name ? "input-error" : ""}`}
               {...register("name", { required: "Playlist name is required" })}
             />
-            {errors.name && (
+            {(errors.name || serverError) && (
               <label className="label">
                 <span className="label-text-alt text-error">
-                  {errors.name.message}
+                  {errors.name?.message || serverError}
                 </span>
               </label>
             )}
