@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { X, Plus, Loader } from 'lucide-react'
 import { usePlaylistStore } from '../../store/usePlaylistStore'
 import CreatePlaylistModal from './CreatePlaylistModal'
+import toast from 'react-hot-toast'
 
 
 const AddToPlaylistModal = ({ ModalRef, closeModal, problemId }) => {
@@ -26,15 +27,20 @@ const AddToPlaylistModal = ({ ModalRef, closeModal, problemId }) => {
   }
 
   const handleCreatePlaylist = async (data) => {
-    setServerError("");
     try {
       const res = await createPlaylist(data);
-      await getAllPlaylists(); //refresh playlist list after creating new playlist
+      await getAllPlaylists(); 
+
+      if (res?.id) {
+        setSelectedPlaylist(res.id); //select the newly created playlist
+      }else if(res?.data?.id){
+        setSelectedPlaylist(res.data.id); 
+      }
+      
       return { success: true, data: res };
 
     } catch (error) {
-      setServerError(error.message || "Failed to create playlist");
-      return { success: false };
+      return { success: false , message: error.message};
     }
   }
   const handleFormSubmit = async () => {
@@ -42,6 +48,7 @@ const AddToPlaylistModal = ({ ModalRef, closeModal, problemId }) => {
 
     const result = await addProblemToPlaylist(selectedPlaylist, [problemId]);
     if (result.success) {
+      toast.success("Problem added to playlist ✅");
       closeModal();
     } else {
       setServerError(result.message || "Failed to add problem to playlist");
@@ -71,7 +78,7 @@ const AddToPlaylistModal = ({ ModalRef, closeModal, problemId }) => {
                 value={selectedPlaylist}
                 onChange={(e) => setSelectedPlaylist(e.target.value)}
               >
-                <option disabled selected>Select a playlist</option>
+                <option disabled value={""}>Select a playlist</option>
                 {playlists.map((playlist) => (
                   <option key={playlist.id} value={playlist.id}>
                     {playlist.name}

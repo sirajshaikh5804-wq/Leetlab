@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+/src/store/useActionStore.js
+/src/components/DeleteConfirmationModal.jsx
